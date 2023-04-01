@@ -1,59 +1,73 @@
-from pyglet.gl import *
-from pyglet.graphics import Batch
-from pyglet.graphics.shader import Shader, ShaderProgram
+import pyglet
+import numpy as np
+
+window = pyglet.window.Window(800, 600)
+batch = pyglet.graphics.Batch()
+
+sky = pyglet.shapes.Rectangle(0, 0, width=window.width, height=window.height,
+color = (0,31,195), batch=batch)
+
+class Nave:
+    def __init__(self, x_initial: float, y_initial: float):
+        self.x_initial = x_initial
+        self.y_initial = y_initial
+        self.body_left = pyglet.shapes.Triangle(x = x_initial, y = y_initial, 
+                                                x2 = x_initial,y2 = y_initial - 160, 
+                                                x3 = x_initial - 25, y3 = y_initial - 105,
+                                                batch=batch)
+
+        self.body_right = pyglet.shapes.Triangle(x = x_initial,y = y_initial, 
+                                                x2 = x_initial, y2 = y_initial - 160, 
+                                                x3 = x_initial + 25,y3 = y_initial - 105,
+                                                batch=batch)
+
+        self.wing_left = pyglet.shapes.Triangle(x = x_initial - 35, y = y_initial - 100, 
+                                               x2 = x_initial - 5, y2 = y_initial - 110, 
+                                               x3 = x_initial - 95, y3  = y_initial - 190,
+                                               batch=batch)
+
+        self.wing_right = pyglet.shapes.Triangle(x = x_initial + 35, y = y_initial - 100, 
+                                                x2 = x_initial + 5, y2 = y_initial - 110, 
+                                                x3 = x_initial + 95, y3  = y_initial - 190,
+                                                batch=batch)
+
+        self.propellant_left1 = pyglet.shapes.Triangle(x = x_initial - 22, y = y_initial - 70,
+                                                    x2 = x_initial - 27, y2 = y_initial - 180,
+                                                    x3 = x_initial - 26, y3 = y_initial - 110,
+                                                    batch = batch, color=(160, 170, 255))
+
+        self.propellant_left2 = pyglet.shapes.Triangle(x = x_initial - 22, y = y_initial - 70,
+                                                     x2 = x_initial - 27, y2 = y_initial - 180,
+                                                     x3 = x_initial - 17, y3 = y_initial - 115,
+                                                     batch = batch, color=(160, 170, 255))
+
+        self.propellant_right1 = pyglet.shapes.Triangle(x = x_initial + 22, y = y_initial - 70,
+                                                    x2 = x_initial + 27, y2 = y_initial - 180,
+                                                    x3 = x_initial + 26, y3 = y_initial - 110,
+                                                    batch = batch, color=(160, 170, 255))
+                                                    
+        self.propellant_right2 = pyglet.shapes.Triangle(x = x_initial + 22, y = y_initial - 70,
+                                                     x2 = x_initial + 27, y2 = y_initial - 180,
+                                                     x3 = x_initial + 17, y3 = y_initial - 115,
+                                                     batch = batch, color=(160, 170, 255))
 
 
-def shader_program():
-    vertex_source = """#version 150 core
-        in vec2 position;
-        in vec4 colors;
-        out vec4 vertex_colors;
+class Star:
+    def __init__(self, x_initial: float, y_initial: float):
+        self.x_initial = x_initial
+        self.y_initial = y_initial
 
-        uniform mat4 projection;
-
-        void main()
-        {
-            gl_Position = projection * vec4(position, 0.0, 1.0);
-            vertex_colors = colors;
-        }
-    """
-
-    fragment_source = """#version 150 core
-        in vec4 vertex_colors;
-        out vec4 final_color;
-
-        void main()
-        {
-            final_color = vertex_colors;
-        }
-    """
-
-    vert_shader = Shader(vertex_source, 'vertex')
-    frag_shader = Shader(fragment_source, 'fragment')
-    program = ShaderProgram(vert_shader, frag_shader)
-    return program
+        self.star = pyglet.shapes.Star(x = x_initial, y = y_initial, outer_radius = 5, inner_radius = 15, num_spikes = 5, batch=batch)
 
 
+nave = Nave(400, 300)
+star = Star(90, 100)
+
+@window.event
+def on_draw():
+    window.clear()
+    batch.draw()
 
 
-class Triangle:
-    def __init__(self):
-        triangle = Batch()
-        program = shader_program()
-        self.vertices = program.vertex_list(3, GL_TRIANGLES, batch = triangle,
-                                            position=("f", (-0.5, -0.5, 0.5, -0.5, 0.0,0.5)),
-                                            colors=("Bn", (0,218, 22)))
-
-class MyWindow(pyglet.window.Window):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.set_minimum_size(400, 300)
-        self.triangle = Triangle()
-        
-    def on_draw(self):
-        self.triangle.vertices.draw(GL_TRIANGLES)
-        
-if __name__ == "__main__":
-    window = MyWindow(1280, 720, "Tarea 1", resizable = True)
-    window.on_draw()
+if __name__ == '__main__':
     pyglet.app.run()
