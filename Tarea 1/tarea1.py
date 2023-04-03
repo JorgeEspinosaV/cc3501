@@ -1,5 +1,6 @@
 import pyglet
 import numpy as np
+import random 
 
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch()
@@ -60,14 +61,33 @@ class Star:
         self.star = pyglet.shapes.Star(x = x_initial, y = y_initial, outer_radius = 5, inner_radius = 15, num_spikes = 5, batch=batch)
 
 
-nave = Nave(400, 300)
-star = Star(90, 100)
+numero_estrellas =  random.randint(10,40)
+
+i = 0
+while i <= 30:
+    x = random.randint(0, window.width)
+    y = random.randint(0, window.height)
+    star = Star(x, y)
+    i+=1
+
+
+nave_lider = Nave(400, 500)    
+nave_izq = Nave(250, 250)
+nave_der = Nave(550, 250)
+
+
+
+
+
+
 
 @window.event
 def on_draw():
     window.clear()
+    
     batch.draw()
 
 
 if __name__ == '__main__':
+    
     pyglet.app.run()
