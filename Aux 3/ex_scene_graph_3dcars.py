@@ -39,7 +39,7 @@ def on_key(window, key, scancode, action, mods):
     if key == glfw.KEY_SPACE:
         controller.fillPolygon = not controller.fillPolygon
 
-    elif key == glfw.KEY_LEFT_CONTROL:
+    elif key == glfw.KEY_A:
         controller.showAxis = not controller.showAxis
 
     elif key == glfw.KEY_ESCAPE:
