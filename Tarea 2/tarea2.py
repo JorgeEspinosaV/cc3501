@@ -14,22 +14,6 @@ import repo.grafica.scene_graph as sg
 import repo.grafica.easy_shaders as es
 import repo.grafica.performance_monitor as pm
 
-class Controller:
-    def __init__(self):
-        self.fillPolygon=True
-        self.showAxis=True
-
-controller=Controller()
-
-@window.event
-def on_key_press(symbol, modifiers):
-    if symbol == key.SPACE:
-        controller.fillPolygon = not controller.fillPolygon
-    elif symbol == key.A:
-        controller.showAxis = not controller.showAxis
-    elif symbol == key.ESCAPE:
-        window.close()
-
 def createCar(pipeline, r, g, b):
     redCube = bs.createColorCube(1,0,0)
     gpuRedCube = es.GPUShape().initBuffers()
@@ -56,14 +40,48 @@ def createCar(pipeline, r, g, b):
     backWheel.transform = tr.translate(0.3, 0, -0.3)
     backWheel.childs += [wheelRotation]
 
+    chasis = sg.SceneGraphNode("chasis")
+    chasis.transform = tr.scale(1,0.7,0.5)
+    chasis.childs += [gpuChasisCube]
+
+    car = sg.SceneGraphNode("car")
+    car.childs += [chasis]
+    car.childs += [frontWheel]
+    car.childs += [backWheel]
+
+    return car
+
+class Controller(pyglet.window.Window):
+    def __init__(self, width, height):
+        super().__init__(width, height)
+        self.fillPolygon=True
+        self.showAxis=True
+        self.pipeline = es.SimpleShaderProgram()
+        self.car = createCar(pipeline, 0.2, 0.2, 0.2)
+
+WIDTH, HEIGHT = 800, 800
+controller=Controller(width=WIDTH, height=HEIGHT)
+
+
+
+@controller.event
+def on_key_press(symbol, modifiers):
+    if symbol == key.SPACE:
+        controller.fillPolygon = not controller.fillPolygon
+    elif symbol == key.A:
+        controller.showAxis = not controller.showAxis
     
 
 
-@window.event
-def on_draw():
-    window.clear()
 
-pyglet.app.run()
+@controller.event
+def on_draw():
+    controller.clear()
+    sg.drawSceneGraphNode(controller.car, controller.pipeline, tr.identity())
+
+
+if __name__ == "__main__":
+    pyglet.app.run()
 
 
 

@@ -92,7 +92,6 @@ def createCar(pipeline, r, g, b):
 
     return car
 
-
 if __name__ == "__main__":
 
     # Initialize glfw
